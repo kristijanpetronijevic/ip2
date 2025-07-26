@@ -1,0 +1,5 @@
+{1}                 #SUP: 38818 (38.818%)         Closed and Maximal  
+{2}                 #SUP: 57027 (57.027%)         Closed              
+{3}                 #SUP: 44062 (44.062%)         Closed              
+{4}                 #SUP: 26543 (26.543%)         Closed and Maximal  
+{2, 3}              #SUP: 21795 (21.795%)         Closed and Maximal  
