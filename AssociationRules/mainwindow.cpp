@@ -419,9 +419,9 @@ void MainWindow::findRareItemsets(const QString &filename) {
         QStringList parts = line.split(' ', Qt::SkipEmptyParts);
         QVector<int> transaction;
         for (auto &p : parts) {
-            transaction.append(p.toInt());      // sve pojave, bez izbacivanja duplikata
+            transaction.append(p.toInt());
         }
-        std::sort(transaction.begin(), transaction.end());  // leksikografski red
+        std::sort(transaction.begin(), transaction.end());
         database.append(transaction);
     }
     file.close();
@@ -439,9 +439,8 @@ void MainWindow::findRareItemsets(const QString &filename) {
 
     // --- 3. Inicijalizacija: razdvajamo česte vs. retke vel.1
     QVector<int> frequent1;
-    QMap<QVector<int>,int> supportCount; // mapira svaki retki itemset na njegovu podršku
-
-    for (auto it = mapItemCount.begin(); it != mapItemCount.end(); ++it) {
+    QMap<QVector<int>,int> supportCount;
+    for (auto it = mapItemCount.constBegin(); it != mapItemCount.constEnd(); ++it) {
         if (it.value() >= minsupAbsolute) {
             frequent1.append(it.key());
         } else {
@@ -453,17 +452,16 @@ void MainWindow::findRareItemsets(const QString &filename) {
     // --- 4. Kandidati veličine 2
     using Itemset = QVector<int>;
     using Cand = QPair<Itemset,int>;
-    QVector<Cand> candidates2;
+    QVector<Cand> candidates;
     for (int i = 0; i < frequent1.size(); ++i) {
         for (int j = i+1; j < frequent1.size(); ++j) {
-            candidates2.append({ { frequent1[i], frequent1[j] }, 0 });
+            candidates.append({ { frequent1[i], frequent1[j] }, 0 });
         }
     }
 
     // Helper: proverava da li su svi (k-1)-podskupovi kandidata prisutni u nivou levelK_1
     auto allSubsetsFrequent = [&](const Itemset &cand, const QSet<Itemset> &setK_1) {
-        int k = cand.size();
-        for (int removePos = 0; removePos < k; ++removePos) {
+        for (int removePos = 0; removePos < cand.size(); ++removePos) {
             Itemset subset = cand;
             subset.removeAt(removePos);
             if (!setK_1.contains(subset)) return false;
@@ -472,116 +470,99 @@ void MainWindow::findRareItemsets(const QString &filename) {
     };
 
     // --- 5. Glavna petlja za k=2,3,...
-    QVector<Cand> candidates = std::move(candidates2);
-    QVector<Itemset> levelK_1 = {};     // biće punjen čestim skupovima
+    QVector<Itemset> levelK_1;
     int k = 2;
     while (!candidates.isEmpty()) {
         // reset podrške
         for (auto &c : candidates) c.second = 0;
 
-        // scan DB i broj podrške svakog kandidata
+        // scan DB i broj podrške
         for (auto &t : database) {
             for (auto &c : candidates) {
-                // pronalaženje da li je c.first podskup t
                 const Itemset &ci = c.first;
-                int i=0, j=0;
+                int i = 0, j = 0;
                 while (i < t.size() && j < ci.size()) {
                     if (t[i] == ci[j]) { ++i; ++j; }
                     else if (t[i] < ci[j]) ++i;
                     else break;
                 }
-                if (j == ci.size()) {
-                    ++c.second;
-                }
+                if (j == ci.size()) ++c.second;
             }
         }
 
-        // odvajanje retkih (<minsup) i čestih (>=minsup)
+        // separacija
         QVector<Itemset> levelK;
-        QSet<Itemset> setLevelK_1(levelK_1.begin(), levelK_1.end());
+        QSet<Itemset> setPrev(levelK_1.begin(), levelK_1.end());
         for (auto &c : candidates) {
-            if (c.second >= minsupAbsolute) {
-                levelK.append(c.first);
-            } else {
-                supportCount[c.first] = c.second;
-            }
+            if (c.second >= minsupAbsolute) levelK.append(c.first);
+            else supportCount[c.first] = c.second;
         }
 
-        // priprema za sledeći nivo: generiši k+1 od levelK
-        QVector<Cand> nextCand;
         std::sort(levelK.begin(), levelK.end());
         QSet<Itemset> setLevelK(levelK.begin(), levelK.end());
+
+        // generisanje sledećih kandidata
+        QVector<Cand> next;
         for (int i = 0; i < levelK.size(); ++i) {
             for (int j = i+1; j < levelK.size(); ++j) {
                 const Itemset &a = levelK[i];
                 const Itemset &b = levelK[j];
-                // spoj prefix length k-1
                 bool prefixEq = true;
                 for (int x = 0; x < k-1; ++x) {
                     if (a[x] != b[x]) { prefixEq = false; break; }
                 }
                 if (!prefixEq) break;
-                // kreiraj kandidat
                 Itemset comb = a;
                 comb.append(b.last());
-                // PRUNE: svi podskupovi veličine k moraju biti u levelK
-                if (allSubsetsFrequent(comb, setLevelK)) {
-                    nextCand.append({ comb, 0 });
-                }
+                if (allSubsetsFrequent(comb, setLevelK)) next.append({ comb, 0 });
             }
         }
 
-        // shift za sledeću iteraciju
         levelK_1 = std::move(levelK);
-        candidates = std::move(nextCand);
+        candidates = std::move(next);
         ++k;
     }
 
-    // --- 6. Filtriraj samo MINIMALNE retke skupove
-    QMap<QVector<int>,int> minimalRare;
-    for (auto it = supportCount.begin(); it != supportCount.end(); ++it) {
+    // --- 6. Filtriraj minimalističke retke skupove
+    QMap<Itemset,int> minimalRare;
+    for (auto it = supportCount.constBegin(); it != supportCount.constEnd(); ++it) {
         const Itemset &iset = it.key();
         bool minimal = true;
         for (int pos = 0; pos < iset.size(); ++pos) {
-            Itemset subset = iset;
-            subset.removeAt(pos);
-            if (supportCount.contains(subset)) {
-                minimal = false;
-                break;
-            }
+            Itemset sub = iset;
+            sub.removeAt(pos);
+            if (supportCount.contains(sub)) { minimal = false; break; }
         }
         if (minimal) minimalRare[iset] = it.value();
     }
 
-    // --- 7. Ispis u debug, fajl i textEdit
+    // --- 7. Ispis
     qDebug() << "Minimalni retki skupovi (<" << minsupAbsolute << "):";
-    for (auto it = minimalRare.begin(); it != minimalRare.end(); ++it) {
+    for (auto it = minimalRare.constBegin(); it != minimalRare.constEnd(); ++it) {
         qDebug() << it.key() << "#SUP:" << it.value();
     }
 
     QFile outF(output1);
-    if (outF.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!outF.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Ne mogu da otvorim izlazni fajl:" << output1;
+    } else {
         QTextStream out(&outF);
-        for (auto it = minimalRare.begin(); it != minimalRare.end(); ++it) {
+        for (auto it = minimalRare.constBegin(); it != minimalRare.constEnd(); ++it) {
             QString s;
             for (int v : it.key()) s += QString::number(v) + " ";
             out << s.trimmed() << " #SUP: " << it.value() << "\n";
         }
         outF.close();
-    } else {
-        qWarning() << "Ne mogu da otvorim izlazni fajl:" << output1;
     }
 
     QString preview;
-    for (auto it = minimalRare.begin(); it != minimalRare.end(); ++it) {
+    for (auto it = minimalRare.constBegin(); it != minimalRare.constEnd(); ++it) {
         QString s;
         for (int v : it.key()) s += QString::number(v) + " ";
         preview += "{" + s.trimmed() + "} -> " + QString::number(it.value()) + "\n";
     }
     ui->textEdit->setText(preview);
 }
-
-
 
 
 
