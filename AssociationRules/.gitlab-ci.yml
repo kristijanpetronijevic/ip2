@@ -1,0 +1,19 @@
+image: alpine:3.19
+
+variables:
+  DOXYGEN_CONFIG: Doxyfile
+
+pages:
+  stage: deploy
+  before_script:
+    - apk add --no-cache doxygen graphviz
+  script:
+    - doxygen "$DOXYGEN_CONFIG"
+    - rm -rf public
+    - mv docs/html public || mv html public
+
+  artifacts:
+    paths:
+      - public
+  only:
+    - branches

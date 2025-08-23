@@ -1,0 +1,87 @@
+\doxysection{mainwindow.\+h}
+\hypertarget{mainwindow_8h_source}{}\label{mainwindow_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MAINWINDOW\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MAINWINDOW\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QMainWindow>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QPushButton>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QMessageBox>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <QGraphicsScene>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <QGraphicsView>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <QFile>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QTextStream>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <QVector>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <QStringList>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QCoreApplication>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QTextStream>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <QHash>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <QStringList>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <QSet>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <QDebug>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}tabs/Grid/grid.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}tabs/FrequentItemset/frequentitemset.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ QT\_BEGIN\_NAMESPACE}
+\DoxyCodeLine{00025\ \textcolor{keyword}{namespace\ }Ui\ \{}
+\DoxyCodeLine{00026\ \textcolor{keyword}{class\ }MainWindow;}
+\DoxyCodeLine{00027\ \}}
+\DoxyCodeLine{00028\ QT\_END\_NAMESPACE}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }MainWindow\ :\ \textcolor{keyword}{public}\ QMainWindow}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00035\ \ \ \ \ MainWindow(QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00036\ \ \ \ \ \string~MainWindow();}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{public}\ slots:}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ gridOnBrowseButtonClicked();}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ gridOnChangeButtonClicked();}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ gridOnRunAlgorithmButtonClicked();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ freqOnBrowseButtonClicked();}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ freqOnChangeButtonClicked();}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ freqOnRunAlgorithmButtonClicked();}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ freqOnForwardButtonClicked();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ changeParams();}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{void}\ pbChooseVector1();}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ pbChooseVector2();}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ pbCompute();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ pbChooseApr();}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ pbFindRare();}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ pbChooseOutput();}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00059\ \ \ \ \ Ui::MainWindow\ *ui;}
+\DoxyCodeLine{00060\ \ \ \ \ Grid\ *\_gridTab;}
+\DoxyCodeLine{00061\ \ \ \ \ QGraphicsScene\ *\_gridScene;}
+\DoxyCodeLine{00062\ \ \ \ \ FrequentItemset\ *\_frequentItemsetTab;}
+\DoxyCodeLine{00063\ \ \ \ \ QGraphicsScene\ *\_frequentItemsetScene;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ gridConfig();}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ frequentItemsetConfig();}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{double}\ minkowskiDistance(\textcolor{keyword}{const}\ QVector<double>\ \&vec1,\ \textcolor{keyword}{const}\ QVector<double>\ \&vec2,\ \textcolor{keywordtype}{double}\ p);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{double}\ mahalanobisDistance(\textcolor{keyword}{const}\ QVector<double>\ \&vec1,\ \textcolor{keyword}{const}\ QVector<double>\ \&vec2);}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{double}\ cosineDistance(\textcolor{keyword}{const}\ QVector<double>\&\ vec1,\ \textcolor{keyword}{const}\ QVector<double>\&\ vec2);}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ hammingDistance(\textcolor{keyword}{const}\ QVector<double>\&\ vec1,\ \textcolor{keyword}{const}\ QVector<double>\&\ vec2);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{double}\ jaccardCoefficient(\textcolor{keyword}{const}\ QVector<double>\ \&vec1,\ \textcolor{keyword}{const}\ QVector<double>\ \&vec2);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ QVector<double>\ parseVector(\textcolor{keyword}{const}\ QString\&\ filePath);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ findRareItemsets(\textcolor{keyword}{const}\ QString\ \&filename);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MAINWINDOW\_H}}
+
+\end{DoxyCode}
