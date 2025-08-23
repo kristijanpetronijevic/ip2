@@ -322,7 +322,7 @@ double MainWindow::jaccardCoefficient(const QVector<double> &vec1, const QVector
         } else if (vec1[i] == 0.0 && vec2[i] == 1.0) {
             m01++;
         }
-        // (0, 0) se ignoriše
+
     }
 
     int denominator = m11 + m10 + m01;
@@ -330,7 +330,7 @@ double MainWindow::jaccardCoefficient(const QVector<double> &vec1, const QVector
         return 0.0;  // Da se izbegne deljenje nulom
     }
     qDebug()<<m11<<m10<<m01<<denominator<< static_cast<double>(m11)<<static_cast<double>(m11) / denominator<<1 - static_cast<double>(m11) / denominator;
-    return  1 - static_cast<double>(m11) / denominator;
+    return  static_cast<double>(m11) / denominator;
 }
 
 
@@ -696,11 +696,31 @@ void MainWindow::pbCompute()
         ui->leRes->setText(QString::number(res));
     }
     if (dist == "Hamming Distance"){
+        for (int i = 0; i < vec1.size(); ++i) {
+        if (!(vec1[i] == 0 or vec1[i] == 1)){
+            ui->leRes->setText("Vectors value must be 1 or 0");
+                return;
+        }
+        if (!(vec2[i] == 0 or vec2[i] == 1)){
+            ui->leRes->setText("Vectors value must be 1 or 0");
+                return;
+        }
+        }
         int res = MainWindow::hammingDistance(vec1, vec2);
         ui->leRes->setText(QString::number(res));
 
     }
     if (dist == "Jaccard coefficient"){
+        for (int i = 0; i < vec1.size(); ++i) {
+        if (!(vec1[i] == 0 or vec1[i] == 1)){
+                ui->leRes->setText("Vectors value must be 1 or 0");
+                return;
+        }
+        if (!(vec2[i] == 0 or vec2[i] == 1)){
+                ui->leRes->setText("Vectors value must be 1 or 0");
+                return;
+        }
+        }
     double res = MainWindow::jaccardCoefficient(vec1, vec2);
     ui->leRes->setText(QString::number(res));
 
