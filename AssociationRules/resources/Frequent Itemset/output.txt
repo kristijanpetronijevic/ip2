@@ -1,6 +1,13 @@
-1 #SUP: 9
-2 #SUP: 10
-3 #SUP: 11
-4 #SUP: 7
-5 #SUP: 6
-6 #SUP: 8
+1 2 #SUP: 5
+1 4 #SUP: 3
+1 5 #SUP: 3
+1 6 #SUP: 4
+2 4 #SUP: 3
+2 5 #SUP: 2
+2 6 #SUP: 4
+3 4 #SUP: 3
+3 5 #SUP: 3
+3 6 #SUP: 4
+4 5 #SUP: 2
+4 6 #SUP: 2
+5 6 #SUP: 2

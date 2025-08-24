@@ -289,7 +289,7 @@ int MainWindow::hammingDistance(const QVector<double> &vec1, const QVector<doubl
 {
     if (vec1.size() != vec2.size()) {
         qWarning() << "Vektori nisu iste duzine!";
-        return -1;  // Greška
+        return -1;
     }
 
     int distance = 0;
